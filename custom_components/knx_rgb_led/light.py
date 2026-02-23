@@ -205,10 +205,6 @@ class KNXRGBLEDLight(LightEntity, RestoreEntity):
                 await self._send_color((0, 0, 0))
                 await asyncio.sleep(off_secs)
         except asyncio.CancelledError:
-            # Restore the light to its last color so it does not stay dark.
-            # asyncio.shield() prevents this cleanup await from being
-            # immediately cancelled by the same CancelledError.
-            await asyncio.shield(self._send_color(self._rgb_color))
             raise
 
     # ------------------------------------------------------------------
