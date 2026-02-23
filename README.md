@@ -2,7 +2,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
-A Home Assistant custom component that exposes KNX RGB LEDs using **DPT 232.600** as standard `light` entities.  It supports turning lights on/off, changing color, driving multiple physical KNX group addresses from a single logical light, and persisting the last color across HA restarts.
+A Home Assistant custom component that exposes KNX RGB LEDs using **DPT 232.600** as standard `light` entities.  It supports turning lights on/off, changing color, driving multiple physical KNX group addresses from a single logical light, persisting the last color across HA restarts, and **blinking effects** (slow, medium, rapid).
 
 ---
 
@@ -13,6 +13,7 @@ A Home Assistant custom component that exposes KNX RGB LEDs using **DPT 232.600*
 - 🔁 Last color is remembered across restarts (no repeated configuration needed)
 - 📡 One logical light can write to **multiple** KNX group addresses simultaneously
 - 🏠 Multiple independent LED lights supported
+- ✨ Built-in **blink effects**: Slow (2 s), Medium (0.75 s), Rapid (0.25 s)
 
 ---
 
@@ -74,10 +75,27 @@ light:
 | Turn **off** | `0x000000` sent to every configured address |
 | Turn **on** (no color) | Last used RGB value re-sent |
 | Turn **on** with color | New RGB value sent and remembered |
+| Effect **Blink Slow** | Alternates on/off every **2 s** |
+| Effect **Blink Medium** | Alternates on/off every **0.75 s** |
+| Effect **Blink Rapid** | Alternates on/off every **0.25 s** |
 
 The component accesses the `xknx` instance provided by the built-in KNX integration and sends raw 3-byte `GroupValueWrite` telegrams using **DPT 232.600** encoding.
 
 State (on/off + last color) is restored automatically after a HA restart via `RestoreEntity`.
+
+### Using effects
+
+Effects can be activated from the HA UI (light card → **Effects** drop-down) or via the `light.turn_on` service call:
+
+```yaml
+service: light.turn_on
+target:
+  entity_id: light.living_room_led_strip
+data:
+  effect: "Blink Slow"   # or "Blink Medium" / "Blink Rapid"
+```
+
+To stop the effect, call `light.turn_on` without an effect (or `light.turn_off`).
 
 ---
 
