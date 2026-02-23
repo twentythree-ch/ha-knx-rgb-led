@@ -1,0 +1,1 @@
+"""KNX RGB LED integration."""
